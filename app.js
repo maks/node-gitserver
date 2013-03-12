@@ -1,3 +1,6 @@
+/*jshint node:true, es5:true */
+
+"use strict";
 
 /**
  * Module dependencies.
@@ -29,6 +32,10 @@ app.configure('development', function(){
 
 app.get('/', routes.index);
 app.get('/users', user.list);
+app.get('/:user/:project/git/info/refs', routes.getInfoRefs);
+app.post('/:user/:project/git/git-receive-pack', routes.postReceivePack);
+
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
