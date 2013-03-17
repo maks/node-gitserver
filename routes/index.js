@@ -27,13 +27,11 @@ exports.getInfoRefs = function(req, res){
 
   var packet = "# service=git-receive-pack\n";
   var length = packet.length + 4;
-  var hex = "0123456789abcdef";
-  var prefix = hex.charAt (length >> 12) & 0xf;
-  prefix = prefix + hex.charAt(length >> 8) & 0xf;
-  prefix = prefix + hex.charAt(length >> 4) & 0xf;
-  prefix = prefix + hex.charAt(length) & 0xf;
-  res.write(prefix+packet+"0000");
-  console.log(prefix+packet+"0000");
+  
+  var prefix = (packet.length+4).toString(16);  
+  var line = pad(prefix, 4)+packet+"0000"; 
+  res.write(line);
+  console.log(line);
 
   var git = spawn('git-receive-pack', ['--stateless-rpc', '--advertise-refs', '/home/maks/tmp/gitserver-repos/gitserver']);
   //git.stdout.pipe(res);
@@ -66,3 +64,14 @@ exports.postReceivePack = function(req, res) {
     res.end();
   });
 };
+
+/**
+ * num - number to pad
+ * pad - number of places to pad to
+ * chr - character to use for padding, default to '0'
+ */
+function pad(num, pad, chr) {
+    var pad_char = typeof chr !== 'undefined' ? chr : '0';
+    var pad = new Array(1 + pad).join(pad_char);
+    return (pad + num).slice(-pad.length);
+}
